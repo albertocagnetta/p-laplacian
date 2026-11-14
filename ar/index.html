@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Augmented reality | Poster</title>
+<link rel="stylesheet" href="style.css">
+<script defer src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+<script defer src="profile.js"></script>
+<script defer src="model.js"></script>
+<script defer src="camera.js"></script>
+</head>
+<body>
+<header><strong>Augmented reality</strong><nav><a href="../">Back to poster</a></nav></header>
+<main id="controls">
+  <p id="status" role="status">Use the camera to scan the concentration and flux figure.</p>
+  <div>
+    <button id="start" type="button" disabled>Start camera</button>
+    <button id="pause" type="button" hidden>Pause animation</button>
+  </div>
+  <details class="target-help">
+    <summary>Show me the figure</summary>
+    <img src="target.png" alt="Target figure showing a concentration curve above the flux graph" width="1600" height="1120">
+  </details>
+</main>
+</body>
+</html>
