@@ -250,23 +250,24 @@ h1 i { white-space: nowrap; }
     return animation;
   }
 
+  const panelDuration = 4860;
   play(panel, [
     { offset: 0, clipPath: square(8, 4), transform: centered, opacity: 0, easing: ease },
-    { offset: .12, clipPath: square(size, radius), transform: centered, opacity: 1, easing: ease },
-    { offset: .25, clipPath: full, transform: centered, opacity: 1 },
-    { offset: .78, clipPath: full, transform: centered, opacity: 1, easing: ease },
+    { offset: 624 / panelDuration, clipPath: square(size, radius), transform: centered, opacity: 1, easing: ease },
+    { offset: 1300 / panelDuration, clipPath: full, transform: centered, opacity: 1 },
+    { offset: 3840 / panelDuration, clipPath: full, transform: centered, opacity: 1, easing: ease },
     { offset: 1, clipPath: full, transform: 'translateY(0)', opacity: 1 }
-  ], 5200, 0, 'linear');
+  ], panelDuration, 0, 'linear');
   play(panel.querySelector('.intro-fill'), [{ opacity: 1 }, { opacity: 0 }], 520, 1300);
   // Clip the curve from the left edge so no segment can appear before the reveal.
   play(profile, [
     { clipPath: 'inset(0 100% 0 0)', visibility: 'hidden' },
     { clipPath: 'inset(0 0% 0 0)', visibility: 'visible' }
   ], 1950, 1740);
-  play(header, [{ opacity: 0 }, { opacity: 1 }], 720, 4500);
+  play(header, [{ opacity: 0 }, { opacity: 1 }], 620, 4150);
   const reveal = [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'translateY(0)' }];
-  const arButton = play(buttons[0], reveal, 520, 5200);
-  const videoButton = play(buttons[1], reveal, 520, 5700);
+  const arButton = play(buttons[0], reveal, 460, panelDuration);
+  const videoButton = play(buttons[1], reveal, 460, panelDuration + 440);
   buttons.forEach(button => { button.inert = true; });
   skip.hidden = false;
 
