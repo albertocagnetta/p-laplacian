@@ -131,18 +131,11 @@ h1 i { white-space: nowrap; }
   opacity: var(--opacity);
   animation: drift var(--duration) var(--delay) linear infinite;
 }
-.flow-background.is-paused span { animation-play-state: paused; }
 @keyframes drift {
   0% { transform: translate(var(--start-x), var(--start-y)); opacity: 0; }
   8%, 92% { opacity: var(--opacity); }
   100% { transform: translate(var(--end-x), var(--end-y)); opacity: 0; }
 }
-.motion-controls { position: relative; display: flex; justify-content: center; padding: 0 1rem .5rem; }
-.motion-toggle {
-  background: none; color: var(--muted); border: 0; border-radius: .25rem;
-  font: .95rem var(--serif); min-height: 44px; padding-inline: .6rem; cursor: pointer;
-}
-.motion-toggle:hover { color: var(--ink); text-decoration: underline; }
 @media (max-width: 38rem) {
   .flow-background span:nth-child(3n) { display: none; }
   .wrap { padding-top: clamp(1.5rem, 4svh, 2.5rem); }
@@ -179,7 +172,7 @@ h1 i { white-space: nowrap; }
       <path fill="#433b39" d="M360 33H672V150H360Z"/>
       <path fill="none" stroke="#92aab1" stroke-opacity=".68" stroke-dasharray="4 5" d="M360 33V150"/>
       <rect x="48" y="33" width="624" height="117" fill="none" stroke="#9bb5bd" stroke-opacity=".77" vector-effect="non-scaling-stroke"/>
-      <path class="profile" pathLength="1" d="M48.0 54.1 L58.4 54.1 L68.8 54.2 L79.2 54.4 L89.6 54.6 L100.0 54.9 L110.4 55.2 L120.8 55.6 L131.2 56.0 L141.6 56.5 L152.0 57.1 L162.4 57.7 L172.8 58.4 L183.2 59.2 L193.6 60.0 L204.0 60.8 L214.4 61.8 L224.8 62.8 L235.2 63.9 L245.6 65.0 L256.0 66.2 L266.4 67.5 L276.8 68.8 L287.2 70.2 L297.6 71.7 L308.0 73.3 L318.4 74.9 L328.8 76.6 L339.2 78.4 L349.6 80.3 L360.0 82.2 L370.4 84.2 L380.8 86.1 L391.2 88.0 L401.6 89.8 L412.0 91.6 L422.4 93.3 L432.8 95.0 L443.2 96.6 L453.6 98.2 L464.0 99.7 L474.4 101.2 L484.8 102.6 L495.2 103.9 L505.6 105.2 L516.0 106.4 L526.4 107.6 L536.8 108.7 L547.2 109.7 L557.6 110.6 L568.0 111.5 L578.4 112.3 L588.8 113.0 L599.2 113.6 L609.6 114.2 L620.0 114.6 L630.4 115.0 L640.8 115.3 L651.2 115.5 L661.6 115.6 L672.0 115.7" fill="none" stroke="#e2f3f7" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-linecap="round"/>
+      <path class="profile" d="M48.0 54.1 L58.4 54.1 L68.8 54.2 L79.2 54.4 L89.6 54.6 L100.0 54.9 L110.4 55.2 L120.8 55.6 L131.2 56.0 L141.6 56.5 L152.0 57.1 L162.4 57.7 L172.8 58.4 L183.2 59.2 L193.6 60.0 L204.0 60.8 L214.4 61.8 L224.8 62.8 L235.2 63.9 L245.6 65.0 L256.0 66.2 L266.4 67.5 L276.8 68.8 L287.2 70.2 L297.6 71.7 L308.0 73.3 L318.4 74.9 L328.8 76.6 L339.2 78.4 L349.6 80.3 L360.0 82.2 L370.4 84.2 L380.8 86.1 L391.2 88.0 L401.6 89.8 L412.0 91.6 L422.4 93.3 L432.8 95.0 L443.2 96.6 L453.6 98.2 L464.0 99.7 L474.4 101.2 L484.8 102.6 L495.2 103.9 L505.6 105.2 L516.0 106.4 L526.4 107.6 L536.8 108.7 L547.2 109.7 L557.6 110.6 L568.0 111.5 L578.4 112.3 L588.8 113.0 L599.2 113.6 L609.6 114.2 L620.0 114.6 L630.4 115.0 L640.8 115.3 L651.2 115.5 L661.6 115.6 L672.0 115.7" fill="none" stroke="#e2f3f7" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-linecap="round"/>
       <g style="font-family:var(--math)" font-size="23" fill="#dcecf0">
         <text x="48" y="25">𝑢(𝑡)</text>
         <text x="672" y="25" text-anchor="end">𝑝 = 2</text>
@@ -207,7 +200,6 @@ h1 i { white-space: nowrap; }
 </div>
 </section>
 </main>
-<div class="motion-controls"><button class="motion-toggle" type="button" hidden>Pause background</button></div>
 <script>
 (() => {
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -234,18 +226,6 @@ h1 i { white-space: nowrap; }
     dots.append(dot);
   }
   background.append(dots);
-  const toggle = document.querySelector('.motion-toggle');
-  let introRunning = false;
-  function updateMotionControl() {
-    toggle.hidden = motion.matches || introRunning;
-  }
-  toggle.addEventListener('click', () => {
-    const paused = background.classList.toggle('is-paused');
-    toggle.textContent = paused ? 'Resume background' : 'Pause background';
-  });
-  motion.addEventListener('change', updateMotionControl);
-  updateMotionControl();
-
   const panel = document.querySelector('.equation');
   if (motion.matches || !panel.animate || window.scrollY > 0) return;
 
@@ -278,15 +258,17 @@ h1 i { white-space: nowrap; }
     { offset: 1, clipPath: full, transform: 'translateY(0)', opacity: 1 }
   ], 5200, 0, 'linear');
   play(panel.querySelector('.intro-fill'), [{ opacity: 1 }, { opacity: 0 }], 520, 1300);
-  play(profile, [{ strokeDasharray: '1', strokeDashoffset: 1 }, { strokeDasharray: '1', strokeDashoffset: 0 }], 1950, 1740);
+  // Clip the curve from the left edge so no segment can appear before the reveal.
+  play(profile, [
+    { clipPath: 'inset(0 100% 0 0)', visibility: 'hidden' },
+    { clipPath: 'inset(0 0% 0 0)', visibility: 'visible' }
+  ], 1950, 1740);
   play(header, [{ opacity: 0 }, { opacity: 1 }], 720, 4500);
   const reveal = [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'translateY(0)' }];
   const arButton = play(buttons[0], reveal, 520, 5200);
   const videoButton = play(buttons[1], reveal, 520, 5700);
   buttons.forEach(button => { button.inert = true; });
   skip.hidden = false;
-  introRunning = true;
-  updateMotionControl();
 
   function finish() {
     const focusWasOnSkip = document.activeElement === skip;
@@ -294,8 +276,6 @@ h1 i { white-space: nowrap; }
     buttons.forEach(button => { button.inert = false; });
     if (focusWasOnSkip) buttons[0].focus();
     skip.hidden = true;
-    introRunning = false;
-    updateMotionControl();
     window.removeEventListener('resize', finish);
     motion.removeEventListener('change', finish);
   }
