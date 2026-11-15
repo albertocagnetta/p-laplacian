@@ -128,14 +128,14 @@ h1 i { white-space: nowrap; }
   height: var(--size);
   border-radius: 50%;
   background: #fff;
-  opacity: .21;
+  opacity: var(--opacity);
   animation: drift var(--duration) var(--delay) linear infinite;
 }
 .flow-background.is-paused span { animation-play-state: paused; }
 @keyframes drift {
-  0% { transform: translateX(-8vw); opacity: 0; }
-  20%, 75% { opacity: .44; }
-  100% { transform: translate(13vw, -1.25vh); opacity: 0; }
+  0% { transform: translate(var(--start-x), var(--start-y)); opacity: 0; }
+  8%, 92% { opacity: var(--opacity); }
+  100% { transform: translate(var(--end-x), var(--end-y)); opacity: 0; }
 }
 .motion-controls { position: relative; display: flex; justify-content: center; padding: 0 1rem .5rem; }
 .motion-toggle {
@@ -144,7 +144,7 @@ h1 i { white-space: nowrap; }
 }
 .motion-toggle:hover { color: var(--ink); text-decoration: underline; }
 @media (max-width: 38rem) {
-  .flow-background span:nth-child(n + 16) { display: none; }
+  .flow-background span:nth-child(3n) { display: none; }
   .wrap { padding-top: clamp(1.5rem, 4svh, 2.5rem); }
   .actions { grid-template-columns: 1fr; }
   .author { margin-top: .6rem; }
@@ -157,32 +157,7 @@ h1 i { white-space: nowrap; }
 </style>
 </head>
 <body>
-<div class="flow-background" aria-hidden="true">
-  <span style="--x:86%;--y:1%;--size:2px;--duration:29s;--delay:-33s"></span>
-  <span style="--x:25%;--y:28%;--size:1.5px;--duration:42s;--delay:-19s"></span>
-  <span style="--x:74%;--y:36%;--size:2px;--duration:34s;--delay:-7s"></span>
-  <span style="--x:33%;--y:61%;--size:1.5px;--duration:34s;--delay:-7s"></span>
-  <span style="--x:98%;--y:74%;--size:1.5px;--duration:26s;--delay:-13s"></span>
-  <span style="--x:9%;--y:86%;--size:1px;--duration:43s;--delay:-30s"></span>
-  <span style="--x:49%;--y:2%;--size:1px;--duration:39s;--delay:-2s"></span>
-  <span style="--x:12%;--y:29%;--size:1.5px;--duration:40s;--delay:-20s"></span>
-  <span style="--x:73%;--y:37%;--size:2px;--duration:39s;--delay:-15s"></span>
-  <span style="--x:99%;--y:51%;--size:1px;--duration:38s;--delay:-13s"></span>
-  <span style="--x:17%;--y:68%;--size:2px;--duration:41s;--delay:-7s"></span>
-  <span style="--x:70%;--y:94%;--size:1px;--duration:40s;--delay:-31s"></span>
-  <span style="--x:76%;--y:3%;--size:2px;--duration:41s;--delay:-33s"></span>
-  <span style="--x:63%;--y:27%;--size:1.5px;--duration:43s;--delay:-12s"></span>
-  <span style="--x:0%;--y:39%;--size:1px;--duration:26s;--delay:-30s"></span>
-  <span style="--x:48%;--y:62%;--size:1px;--duration:34s;--delay:-9s"></span>
-  <span style="--x:60%;--y:73%;--size:1.5px;--duration:38s;--delay:-19s"></span>
-  <span style="--x:94%;--y:85%;--size:1.5px;--duration:40s;--delay:-20s"></span>
-  <span style="--x:39%;--y:1%;--size:1px;--duration:32s;--delay:-20s"></span>
-  <span style="--x:87%;--y:29%;--size:1px;--duration:40s;--delay:-5s"></span>
-  <span style="--x:59%;--y:46%;--size:2px;--duration:26s;--delay:-12s"></span>
-  <span style="--x:55%;--y:56%;--size:1px;--duration:28s;--delay:-9s"></span>
-  <span style="--x:21%;--y:77%;--size:1.5px;--duration:40s;--delay:-8s"></span>
-  <span style="--x:25%;--y:95%;--size:2px;--duration:28s;--delay:-28s"></span>
-</div>
+<div class="flow-background" aria-hidden="true"></div>
 <a class="skip-link" href="#poster">Skip to content</a>
 <button class="skip-intro" type="button" hidden>Skip intro</button>
 <main id="poster" class="poster">
@@ -203,7 +178,7 @@ h1 i { white-space: nowrap; }
       <path fill="#174858" d="M48 33H360V150H48Z"/>
       <path fill="#433b39" d="M360 33H672V150H360Z"/>
       <path fill="none" stroke="#92aab1" stroke-opacity=".68" stroke-dasharray="4 5" d="M360 33V150"/>
-      <path fill="none" stroke="#9bb5bd" d="M48 32V150H672"/>
+      <rect x="48" y="33" width="624" height="117" fill="none" stroke="#9bb5bd" stroke-opacity=".77" vector-effect="non-scaling-stroke"/>
       <path class="profile" pathLength="1" d="M48.0 54.1 L58.4 54.1 L68.8 54.2 L79.2 54.4 L89.6 54.6 L100.0 54.9 L110.4 55.2 L120.8 55.6 L131.2 56.0 L141.6 56.5 L152.0 57.1 L162.4 57.7 L172.8 58.4 L183.2 59.2 L193.6 60.0 L204.0 60.8 L214.4 61.8 L224.8 62.8 L235.2 63.9 L245.6 65.0 L256.0 66.2 L266.4 67.5 L276.8 68.8 L287.2 70.2 L297.6 71.7 L308.0 73.3 L318.4 74.9 L328.8 76.6 L339.2 78.4 L349.6 80.3 L360.0 82.2 L370.4 84.2 L380.8 86.1 L391.2 88.0 L401.6 89.8 L412.0 91.6 L422.4 93.3 L432.8 95.0 L443.2 96.6 L453.6 98.2 L464.0 99.7 L474.4 101.2 L484.8 102.6 L495.2 103.9 L505.6 105.2 L516.0 106.4 L526.4 107.6 L536.8 108.7 L547.2 109.7 L557.6 110.6 L568.0 111.5 L578.4 112.3 L588.8 113.0 L599.2 113.6 L609.6 114.2 L620.0 114.6 L630.4 115.0 L640.8 115.3 L651.2 115.5 L661.6 115.6 L672.0 115.7" fill="none" stroke="#e2f3f7" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-linecap="round"/>
       <g style="font-family:var(--math)" font-size="23" fill="#dcecf0">
         <text x="48" y="25">𝑢(𝑡)</text>
@@ -237,6 +212,28 @@ h1 i { white-space: nowrap; }
 (() => {
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const background = document.querySelector('.flow-background');
+  const dots = document.createDocumentFragment();
+  const columns = 12;
+  const rows = 12;
+  for (let index = 0; index < columns * rows; index++) {
+    const x = (Math.floor(index / rows) + Math.random()) / columns;
+    const y = ((index + Math.floor(index / rows)) % rows + Math.random()) / rows;
+    const before = Math.min(x, y) + .018;
+    const after = Math.min(1 - x, 1 - y) + .018;
+    const crossingTime = 40 + Math.random() * 25;
+    const dot = document.createElement('span');
+    dot.style.cssText = `
+      --x: ${x * 100}%; --y: ${y * 100}%;
+      --start-x: ${-before * 100}vw; --start-y: ${-before * 100}vh;
+      --end-x: ${after * 100}vw; --end-y: ${after * 100}vh;
+      --duration: ${(before + after) * crossingTime}s;
+      --delay: ${-before * crossingTime}s;
+      --size: ${1.1 + Math.random() * 1.5}px;
+      --opacity: ${.26 + Math.random() * .38};
+    `;
+    dots.append(dot);
+  }
+  background.append(dots);
   const toggle = document.querySelector('.motion-toggle');
   let introRunning = false;
   function updateMotionControl() {
