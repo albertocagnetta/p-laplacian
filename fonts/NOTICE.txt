@@ -1,0 +1,41 @@
+Poster Roman Regular, Poster Roman Italic, and Poster Math are renamed WOFF2
+subsets of Latin Modern Roman 10 Regular, Latin Modern Roman 10 Italic,
+and Latin Modern Math. The changes are glyph subsetting, renaming, and format
+conversion, prepared for this poster. The modified versions are distributed
+under the GUST Font License and LaTeX Project Public License 1.3c or later.
+
+Latin Modern Roman copyright 2003–2021 B. Jackowski and J.M. Nowacki
+on behalf of TeX Users Groups. Latin Modern Math extensions copyright
+2012–2014 B. Jackowski, P. Strzelczyk and P. Pianowski on behalf of TeX
+Users Groups.
+
+Originals: https://ctan.org/pkg/lm and https://ctan.org/pkg/lm-math
+License: https://latex-project.org/lppl/lppl-1-3c/
+% This is version 1.0, dated 22 June 2009, of the GUST Font License.
+% (GUST is the Polish TeX Users Group, http://www.gust.org.pl)
+%
+% For the most recent version of this license see
+% http://www.gust.org.pl/fonts/licenses/GUST-FONT-LICENSE.txt
+% or
+% http://tug.org/fonts/licenses/GUST-FONT-LICENSE.txt
+%
+% This work may be distributed and/or modified under the conditions
+% of the LaTeX Project Public License, either version 1.3c of this
+% license or (at your option) any later version.
+%
+% Please also observe the following clause:
+% 1) it is requested, but not legally required, that derived works be
+%    distributed only after changing the names of the fonts comprising this
+%    work and given in an accompanying "manifest", and that the
+%    files comprising the Work, as listed in the manifest, also be given
+%    new names. Any exceptions to this request are also given in the
+%    manifest.
+%
+%    We recommend the manifest be given in a separate file named
+%    MANIFEST-<fontid>.txt, where <fontid> is some unique identification
+%    of the font family. If a separate "readme" file accompanies the Work,
+%    we recommend a name of the form README-<fontid>.txt.
+%
+% The latest version of the LaTeX Project Public License is in
+% http://www.latex-project.org/lppl.txt and version 1.3c or later
+% is part of all distributions of LaTeX version 2006/05/20 or later.

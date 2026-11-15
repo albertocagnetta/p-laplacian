@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#f3fafe">
+<meta name="theme-color" content="#0a2530">
 <meta name="page-type" content="software">
 <meta name="site-kind" content="software">
 <meta name="description" content="Explore the p-Laplacian poster by Alberto Cagnetta in augmented reality and watch the video on the ratio Q.">
@@ -14,33 +14,51 @@
 <meta property="og:image" content="https://albertocagnetta.github.io/p-laplacian/ar/target.png">
 <title>A uniqueness result for two-step indefinite p-Laplacian equations | Alberto Cagnetta</title>
 <style>
+@font-face {
+  font-family: "Poster Roman";
+  src: url("fonts/poster-roman.woff2") format("woff2");
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Poster Roman";
+  src: url("fonts/poster-italic.woff2") format("woff2");
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Poster Math";
+  src: url("fonts/poster-math.woff2") format("woff2");
+  font-display: swap;
+}
 :root {
-  color-scheme: light;
+  color-scheme: dark;
   --petrol: #13526d;
-  --ink: #143745;
-  --muted: #45606c;
-  --sky: #dcf2fd;
-  --paper: #f3fafe;
-  --line: #b9d7e4;
+  --ink: #f3f8f9;
+  --muted: #b8cdd4;
+  --sky: #c5e5ee;
+  --paper: #0a2530;
+  --panel: #102f3b;
+  --line: #416371;
   --radius: .75rem;
-  --serif: "STIX Two Text", "Iowan Old Style", Georgia, serif;
-  --sans: system-ui, sans-serif;
+  --serif: "Poster Roman", Georgia, serif;
+  --math: "Poster Math", math;
 }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); }
-.hero { min-height: 100svh; display: grid; align-items: start; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--serif); }
+.hero { position: relative; display: grid; }
 .wrap {
   width: min(100% - 2 * clamp(1rem, 5vw, 3rem), 53rem);
   display: grid;
   gap: clamp(1rem, 2.8vh, 1.65rem);
   margin-inline: auto;
-  padding: clamp(2rem, 9svh, 5.5rem) 0 2rem;
+  padding: clamp(3rem, 9svh, 5.5rem) 0 1.25rem;
 }
 .poster header { text-align: center; }
 h1 {
   margin: 0 auto;
-  font: 500 clamp(1.92rem, 5vw, 3.5rem)/1.04 var(--serif);
-  letter-spacing: -.045em;
+  font: 400 clamp(1.92rem, 5vw, 3.5rem)/1.08 var(--serif);
+  letter-spacing: -.028em;
   text-wrap: balance;
 }
 h1 i { white-space: nowrap; }
@@ -48,7 +66,7 @@ h1 i { white-space: nowrap; }
 .equation {
   position: relative;
   display: grid;
-  background: #fff;
+  background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   overflow: hidden;
@@ -63,9 +81,9 @@ h1 i { white-space: nowrap; }
   padding: clamp(.7rem, 2.2vw, 1.1rem);
   border-bottom: 1px solid var(--line);
 }
-.formula math { font-size: clamp(1.03rem, 3.4vw, 1.5rem); }
+.formula math { font-family: var(--math); font-size: clamp(1.03rem, 3.4vw, 1.5rem); }
 .formula math + math { color: var(--muted); font-size: clamp(.9rem, 2.6vw, 1.18rem); }
-.equation svg { display: block; width: 100%; max-height: 15.5rem; padding: .45rem .35rem .2rem; }
+.equation svg { display: block; width: 100%; max-height: 13.25rem; padding: .4rem .35rem .15rem; }
 .actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; }
 .action {
   display: grid;
@@ -77,41 +95,94 @@ h1 i { white-space: nowrap; }
   border: 1px solid var(--petrol);
   border-radius: var(--radius);
   text-decoration: none;
-  font-size: .95rem;
-  line-height: 1.3;
+  font-size: 1.06rem;
+  line-height: 1.18;
   transition: background-color .2s, transform .2s;
 }
 .action svg { width: 100%; height: auto; }
-.action strong { display: block; font-weight: 650; }
-.action small { display: block; margin-top: .1rem; font-size: .75rem; }
-.primary { background: var(--petrol); color: white; }
-.secondary { background: white; color: var(--petrol); border-color: var(--line); }
-.primary:hover { background: #0d3f54; }
-.secondary:hover { background: var(--sky); }
+.action strong { display: block; font-weight: 400; }
+.action small { display: block; margin-top: .1rem; font-size: .88rem; }
+.primary { background: var(--sky); color: #0c3543; border-color: var(--sky); }
+.secondary { background: var(--panel); color: var(--ink); border-color: var(--line); }
+.primary:hover { background: #e1f2f7; }
+.secondary:hover { background: #194250; }
 @media (hover: hover) { .action:hover { transform: translateY(-2px); } }
 .action:active { transform: translateY(1px); }
-:focus-visible { outline: 3px solid #a84815; outline-offset: 3px; }
-.intro-fill { position: absolute; inset: 0; background: var(--sky); pointer-events: none; opacity: 0; }
+:focus-visible { outline: 3px solid #f5c99d; outline-offset: 3px; }
+.intro-fill { position: absolute; inset: 0; background: #1c4655; pointer-events: none; opacity: 0; }
 .skip-intro, .skip-link {
   position: fixed; z-index: 2; top: .75rem; min-height: 2.75rem;
   padding: .55rem .85rem; border: 1px solid var(--line); border-radius: var(--radius);
-  background: var(--paper); color: var(--petrol); font: .85rem var(--sans);
+  background: var(--paper); color: var(--sky); font: .95rem var(--serif);
 }
 .skip-intro { right: .75rem; cursor: pointer; }
 .skip-link { left: .75rem; transform: translateY(-200%); }
 .skip-link:focus { transform: none; }
+#poster { position: relative; }
+.flow-background { position: fixed; inset: 0; overflow: hidden; pointer-events: none; }
+.flow-background span {
+  position: absolute;
+  top: var(--y);
+  left: var(--x);
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  background: #fff;
+  opacity: .21;
+  animation: drift var(--duration) var(--delay) linear infinite;
+}
+.flow-background.is-paused span { animation-play-state: paused; }
+@keyframes drift {
+  0% { transform: translateX(-8vw); opacity: 0; }
+  20%, 75% { opacity: .44; }
+  100% { transform: translate(13vw, -1.25vh); opacity: 0; }
+}
+.motion-controls { position: relative; display: flex; justify-content: center; padding: 0 1rem .5rem; }
+.motion-toggle {
+  background: none; color: var(--muted); border: 0; border-radius: .25rem;
+  font: .95rem var(--serif); min-height: 44px; padding-inline: .6rem; cursor: pointer;
+}
+.motion-toggle:hover { color: var(--ink); text-decoration: underline; }
 @media (max-width: 38rem) {
+  .flow-background span:nth-child(n + 16) { display: none; }
   .wrap { padding-top: clamp(1.5rem, 4svh, 2.5rem); }
   .actions { grid-template-columns: 1fr; }
   .author { margin-top: .6rem; }
 }
 @media (prefers-reduced-motion: reduce) {
+  .flow-background span { animation: none; }
   .action { transition: none; }
   .action:hover, .action:active { transform: none; }
 }
 </style>
 </head>
 <body>
+<div class="flow-background" aria-hidden="true">
+  <span style="--x:86%;--y:1%;--size:2px;--duration:29s;--delay:-33s"></span>
+  <span style="--x:25%;--y:28%;--size:1.5px;--duration:42s;--delay:-19s"></span>
+  <span style="--x:74%;--y:36%;--size:2px;--duration:34s;--delay:-7s"></span>
+  <span style="--x:33%;--y:61%;--size:1.5px;--duration:34s;--delay:-7s"></span>
+  <span style="--x:98%;--y:74%;--size:1.5px;--duration:26s;--delay:-13s"></span>
+  <span style="--x:9%;--y:86%;--size:1px;--duration:43s;--delay:-30s"></span>
+  <span style="--x:49%;--y:2%;--size:1px;--duration:39s;--delay:-2s"></span>
+  <span style="--x:12%;--y:29%;--size:1.5px;--duration:40s;--delay:-20s"></span>
+  <span style="--x:73%;--y:37%;--size:2px;--duration:39s;--delay:-15s"></span>
+  <span style="--x:99%;--y:51%;--size:1px;--duration:38s;--delay:-13s"></span>
+  <span style="--x:17%;--y:68%;--size:2px;--duration:41s;--delay:-7s"></span>
+  <span style="--x:70%;--y:94%;--size:1px;--duration:40s;--delay:-31s"></span>
+  <span style="--x:76%;--y:3%;--size:2px;--duration:41s;--delay:-33s"></span>
+  <span style="--x:63%;--y:27%;--size:1.5px;--duration:43s;--delay:-12s"></span>
+  <span style="--x:0%;--y:39%;--size:1px;--duration:26s;--delay:-30s"></span>
+  <span style="--x:48%;--y:62%;--size:1px;--duration:34s;--delay:-9s"></span>
+  <span style="--x:60%;--y:73%;--size:1.5px;--duration:38s;--delay:-19s"></span>
+  <span style="--x:94%;--y:85%;--size:1.5px;--duration:40s;--delay:-20s"></span>
+  <span style="--x:39%;--y:1%;--size:1px;--duration:32s;--delay:-20s"></span>
+  <span style="--x:87%;--y:29%;--size:1px;--duration:40s;--delay:-5s"></span>
+  <span style="--x:59%;--y:46%;--size:2px;--duration:26s;--delay:-12s"></span>
+  <span style="--x:55%;--y:56%;--size:1px;--duration:28s;--delay:-9s"></span>
+  <span style="--x:21%;--y:77%;--size:1.5px;--duration:40s;--delay:-8s"></span>
+  <span style="--x:25%;--y:95%;--size:2px;--duration:28s;--delay:-28s"></span>
+</div>
 <a class="skip-link" href="#poster">Skip to content</a>
 <button class="skip-intro" type="button" hidden>Skip intro</button>
 <main id="poster" class="poster">
@@ -127,25 +198,21 @@ h1 i { white-space: nowrap; }
       <mo>+</mo><mi>a</mi><mo>(</mo><mi>t</mi><mo>)</mo><msup><mi>u</mi><mi>γ</mi></msup><mo>=</mo><mn>0</mn></mrow></math>
       <math><mrow><msub><mi>ϕ</mi><mi>p</mi></msub><mo>(</mo><mi>s</mi><mo>)</mo><mo>=</mo><msup><mrow><mo>|</mo><mi>s</mi><mo>|</mo></mrow><mrow><mi>p</mi><mo>−</mo><mn>2</mn></mrow></msup><mi>s</mi></mrow></math>
     </div>
-    <svg data-visual viewBox="0 0 720 277" role="img" aria-labelledby="plot-title">
-      <title id="plot-title">Example with p = 2. The concentration decreases while the flux peaks at the interface.</title>
-      <path fill="#DCF2FD" d="M48 33H360V150H48Z"/>
-      <path fill="#FFECD9" d="M360 33H672V150H360Z"/>
-      <path fill="none" stroke="#9db0b9" stroke-dasharray="4 5" d="M360 33V246"/>
-      <path fill="none" stroke="#8097a2" d="M48 33V150H672M48 177V236H672"/>
-      <path class="profile" pathLength="1" d="M48.0 54.1 L58.4 54.1 L68.8 54.2 L79.2 54.4 L89.6 54.6 L100.0 54.9 L110.4 55.2 L120.8 55.6 L131.2 56.0 L141.6 56.5 L152.0 57.1 L162.4 57.7 L172.8 58.4 L183.2 59.2 L193.6 60.0 L204.0 60.8 L214.4 61.8 L224.8 62.8 L235.2 63.9 L245.6 65.0 L256.0 66.2 L266.4 67.5 L276.8 68.8 L287.2 70.2 L297.6 71.7 L308.0 73.3 L318.4 74.9 L328.8 76.6 L339.2 78.4 L349.6 80.3 L360.0 82.2 L370.4 84.2 L380.8 86.1 L391.2 88.0 L401.6 89.8 L412.0 91.6 L422.4 93.3 L432.8 95.0 L443.2 96.6 L453.6 98.2 L464.0 99.7 L474.4 101.2 L484.8 102.6 L495.2 103.9 L505.6 105.2 L516.0 106.4 L526.4 107.6 L536.8 108.7 L547.2 109.7 L557.6 110.6 L568.0 111.5 L578.4 112.3 L588.8 113.0 L599.2 113.6 L609.6 114.2 L620.0 114.6 L630.4 115.0 L640.8 115.3 L651.2 115.5 L661.6 115.6 L672.0 115.7" fill="none" stroke="#13526d" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-linecap="round"/>
-      <path d="M48.0 236.0 L58.4 234.3 L68.8 232.6 L79.2 230.9 L89.6 229.2 L100.0 227.5 L110.4 225.8 L120.8 224.1 L131.2 222.3 L141.6 220.6 L152.0 218.8 L162.4 217.1 L172.8 215.3 L183.2 213.5 L193.6 211.7 L204.0 209.9 L214.4 208.1 L224.8 206.2 L235.2 204.3 L245.6 202.4 L256.0 200.5 L266.4 198.5 L276.8 196.5 L287.2 194.5 L297.6 192.4 L308.0 190.3 L318.4 188.2 L328.8 186.0 L339.2 183.7 L349.6 181.4 L360.0 179.0 L370.4 180.2 L380.8 181.5 L391.2 182.8 L401.6 184.2 L412.0 185.5 L422.4 187.0 L432.8 188.5 L443.2 190.0 L453.6 191.6 L464.0 193.2 L474.4 194.9 L484.8 196.6 L495.2 198.4 L505.6 200.2 L516.0 202.1 L526.4 204.0 L536.8 206.0 L547.2 208.1 L557.6 210.2 L568.0 212.3 L578.4 214.6 L588.8 216.8 L599.2 219.1 L609.6 221.4 L620.0 223.8 L630.4 226.2 L640.8 228.6 L651.2 231.1 L661.6 233.5 L672.0 236.0 L672 236H48Z" fill="#DCF2FD"/>
-      <path d="M360 177V236" fill="none" stroke="#9db0b9" stroke-dasharray="4 5"/>
-      <path d="M48.0 236.0 L58.4 234.3 L68.8 232.6 L79.2 230.9 L89.6 229.2 L100.0 227.5 L110.4 225.8 L120.8 224.1 L131.2 222.3 L141.6 220.6 L152.0 218.8 L162.4 217.1 L172.8 215.3 L183.2 213.5 L193.6 211.7 L204.0 209.9 L214.4 208.1 L224.8 206.2 L235.2 204.3 L245.6 202.4 L256.0 200.5 L266.4 198.5 L276.8 196.5 L287.2 194.5 L297.6 192.4 L308.0 190.3 L318.4 188.2 L328.8 186.0 L339.2 183.7 L349.6 181.4 L360.0 179.0 L370.4 180.2 L380.8 181.5 L391.2 182.8 L401.6 184.2 L412.0 185.5 L422.4 187.0 L432.8 188.5 L443.2 190.0 L453.6 191.6 L464.0 193.2 L474.4 194.9 L484.8 196.6 L495.2 198.4 L505.6 200.2 L516.0 202.1 L526.4 204.0 L536.8 206.0 L547.2 208.1 L557.6 210.2 L568.0 212.3 L578.4 214.6 L588.8 216.8 L599.2 219.1 L609.6 221.4 L620.0 223.8 L630.4 226.2 L640.8 228.6 L651.2 231.1 L661.6 233.5 L672.0 236.0" fill="none" stroke="#13526d" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linecap="round"/>
-      <g font-family="Georgia, serif" font-size="24" fill="#143745">
-        <text x="48" y="23">Concentration <tspan font-style="italic">u</tspan></text>
-        <text x="672" y="23" text-anchor="end" font-style="italic">p = 2</text>
-        <text x="150" y="140" fill="#13526d" font-style="italic" text-anchor="middle">a(t) &gt; 0</text>
-        <text x="567" y="140" fill="#974116" font-style="italic" text-anchor="middle">a(t) &lt; 0</text>
-        <text x="48" y="171">Flux <tspan font-style="italic">J</tspan></text>
-        <text x="48" y="263" text-anchor="middle">0</text>
-        <text x="360" y="263" text-anchor="middle" font-style="italic">τ</text>
-        <text x="672" y="263" text-anchor="middle" font-style="italic">T</text>
+    <svg data-visual viewBox="0 0 720 184" role="img" aria-labelledby="plot-title" focusable="false">
+      <title id="plot-title">Decreasing solution u(t) with an inflection at the interface, shown for p = 2.</title>
+      <path fill="#174858" d="M48 33H360V150H48Z"/>
+      <path fill="#433b39" d="M360 33H672V150H360Z"/>
+      <path fill="none" stroke="#92aab1" stroke-opacity=".68" stroke-dasharray="4 5" d="M360 33V150"/>
+      <path fill="none" stroke="#9bb5bd" d="M48 32V150H672"/>
+      <path class="profile" pathLength="1" d="M48.0 54.1 L58.4 54.1 L68.8 54.2 L79.2 54.4 L89.6 54.6 L100.0 54.9 L110.4 55.2 L120.8 55.6 L131.2 56.0 L141.6 56.5 L152.0 57.1 L162.4 57.7 L172.8 58.4 L183.2 59.2 L193.6 60.0 L204.0 60.8 L214.4 61.8 L224.8 62.8 L235.2 63.9 L245.6 65.0 L256.0 66.2 L266.4 67.5 L276.8 68.8 L287.2 70.2 L297.6 71.7 L308.0 73.3 L318.4 74.9 L328.8 76.6 L339.2 78.4 L349.6 80.3 L360.0 82.2 L370.4 84.2 L380.8 86.1 L391.2 88.0 L401.6 89.8 L412.0 91.6 L422.4 93.3 L432.8 95.0 L443.2 96.6 L453.6 98.2 L464.0 99.7 L474.4 101.2 L484.8 102.6 L495.2 103.9 L505.6 105.2 L516.0 106.4 L526.4 107.6 L536.8 108.7 L547.2 109.7 L557.6 110.6 L568.0 111.5 L578.4 112.3 L588.8 113.0 L599.2 113.6 L609.6 114.2 L620.0 114.6 L630.4 115.0 L640.8 115.3 L651.2 115.5 L661.6 115.6 L672.0 115.7" fill="none" stroke="#e2f3f7" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-linecap="round"/>
+      <g style="font-family:var(--math)" font-size="23" fill="#dcecf0">
+        <text x="48" y="25">𝑢(𝑡)</text>
+        <text x="672" y="25" text-anchor="end">𝑝 = 2</text>
+        <text x="150" y="139" fill="#ccecf5" text-anchor="middle">𝑎(𝑡) &gt; 0</text>
+        <text x="567" y="139" fill="#f3d3b9" text-anchor="middle">𝑎(𝑡) &lt; 0</text>
+        <text x="48" y="175" text-anchor="middle">0</text>
+        <text x="360" y="175" text-anchor="middle">𝜏</text>
+        <text x="672" y="175" text-anchor="middle">𝑇</text>
       </g>
     </svg>
     <div class="intro-fill" aria-hidden="true"></div>
@@ -165,9 +232,23 @@ h1 i { white-space: nowrap; }
 </div>
 </section>
 </main>
+<div class="motion-controls"><button class="motion-toggle" type="button" hidden>Pause background</button></div>
 <script>
 (() => {
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const background = document.querySelector('.flow-background');
+  const toggle = document.querySelector('.motion-toggle');
+  let introRunning = false;
+  function updateMotionControl() {
+    toggle.hidden = motion.matches || introRunning;
+  }
+  toggle.addEventListener('click', () => {
+    const paused = background.classList.toggle('is-paused');
+    toggle.textContent = paused ? 'Resume background' : 'Pause background';
+  });
+  motion.addEventListener('change', updateMotionControl);
+  updateMotionControl();
+
   const panel = document.querySelector('.equation');
   if (motion.matches || !panel.animate || window.scrollY > 0) return;
 
@@ -194,19 +275,21 @@ h1 i { white-space: nowrap; }
 
   play(panel, [
     { offset: 0, clipPath: square(8, 4), transform: centered, opacity: 0, easing: ease },
-    { offset: .21, clipPath: square(size, radius), transform: centered, opacity: 1, easing: ease },
-    { offset: .47, clipPath: full, transform: centered, opacity: 1 },
-    { offset: .73, clipPath: full, transform: centered, opacity: 1, easing: ease },
+    { offset: .12, clipPath: square(size, radius), transform: centered, opacity: 1, easing: ease },
+    { offset: .25, clipPath: full, transform: centered, opacity: 1 },
+    { offset: .78, clipPath: full, transform: centered, opacity: 1, easing: ease },
     { offset: 1, clipPath: full, transform: 'translateY(0)', opacity: 1 }
-  ], 2900, 0, 'linear');
-  play(panel.querySelector('.intro-fill'), [{ opacity: 1 }, { opacity: 0 }], 240, 1360);
-  play(profile, [{ strokeDasharray: '1', strokeDashoffset: 1 }, { strokeDasharray: '1', strokeDashoffset: 0 }], 640, 1470);
-  play(header, [{ opacity: 0 }, { opacity: 1 }], 430, 2520);
+  ], 5200, 0, 'linear');
+  play(panel.querySelector('.intro-fill'), [{ opacity: 1 }, { opacity: 0 }], 520, 1300);
+  play(profile, [{ strokeDasharray: '1', strokeDashoffset: 1 }, { strokeDasharray: '1', strokeDashoffset: 0 }], 1950, 1740);
+  play(header, [{ opacity: 0 }, { opacity: 1 }], 720, 4500);
   const reveal = [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'translateY(0)' }];
-  const arButton = play(buttons[0], reveal, 380, 2900);
-  const videoButton = play(buttons[1], reveal, 380, 3180);
+  const arButton = play(buttons[0], reveal, 520, 5200);
+  const videoButton = play(buttons[1], reveal, 520, 5700);
   buttons.forEach(button => { button.inert = true; });
   skip.hidden = false;
+  introRunning = true;
+  updateMotionControl();
 
   function finish() {
     const focusWasOnSkip = document.activeElement === skip;
@@ -214,6 +297,8 @@ h1 i { white-space: nowrap; }
     buttons.forEach(button => { button.inert = false; });
     if (focusWasOnSkip) buttons[0].focus();
     skip.hidden = true;
+    introRunning = false;
+    updateMotionControl();
     window.removeEventListener('resize', finish);
     motion.removeEventListener('change', finish);
   }
