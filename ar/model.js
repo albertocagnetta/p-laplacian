@@ -1,69 +1,304 @@
-const T = AFRAME.THREE;
-function fluxAt(x) {
-  const position = Math.max(0, Math.min(1, x)) * (PROFILE.j.length - 1);
-  const i = Math.min(Math.floor(position), PROFILE.j.length - 2);
-  return (PROFILE.j[i] + (PROFILE.j[i + 1] - PROFILE.j[i]) * (position - i)) / PROFILE.max;
-}
-function fluxColor(value) {
-  const colors = ['#315b9c', '#42d4cd', '#f9e57d'].map(c => new T.Color(c));
-  return value < .5 ? colors[0].lerp(colors[1], value * 2) : colors[1].lerp(colors[2], value * 2 - 1);
-}
-function porousTexture(base, floor = false) {
-  const canvas = document.createElement('canvas');
-  canvas.width = 1024; canvas.height = 256;
-  const ctx = canvas.getContext('2d');
-  for (let x = 0; x < canvas.width; x++) {
-    ctx.fillStyle = floor ? '#' + fluxColor(fluxAt(x / 1023)).getHexString() : base;
-    ctx.fillRect(x, 0, 1, 256);
+(() => {
+  const T = AFRAME.THREE;
+  const length = 6;
+  const depth = 2.3;
+  const thickness = .46;
+  const profileWidth = 1.04;
+
+  function fluxAt(x) {
+    const position = T.MathUtils.clamp(x, 0, 1) * (PROFILE.j.length - 1);
+    const left = Math.min(Math.floor(position), PROFILE.j.length - 2);
+    return T.MathUtils.clamp(T.MathUtils.lerp(PROFILE.j[left], PROFILE.j[left + 1], position - left) / PROFILE.max, 0, 1);
   }
-  let seed = 123456;
-  function random() { seed = (1664525 * seed + 1013904223) >>> 0; return seed / 4294967296; }
-  for (let i = 0; i < 2600; i++) {
-    const x = random() * 1024, y = random() * 256, r = .5 + random() * 3;
-    ctx.fillStyle = 'rgba(15,20,30,0.30)';
-    ctx.beginPath(); ctx.ellipse(x,y,r,r*.7,0,0,Math.PI*2); ctx.fill();
+
+  function canvasLayer(width, height) {
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    return canvas.getContext('2d');
   }
-  const texture = new T.CanvasTexture(canvas);
-  texture.colorSpace = T.SRGBColorSpace;
-  return texture;
-}
-AFRAME.registerComponent('flux-model', {
-  init() {
-    this.group = new T.Group(); this.el.setObject3D('mesh', this.group);
-    this.clock = 0; this.paused = false; this.glows = [];
-    const add = (geometry, material, position) => {
-      const mesh = new T.Mesh(geometry, material);
-      mesh.position.set(...position); this.group.add(mesh); return mesh;
+
+  function textureFrom(ctx, color = true) {
+    const texture = new T.CanvasTexture(ctx.canvas);
+    if (color) texture.colorSpace = T.SRGBColorSpace;
+    return texture;
+  }
+
+  function randomSequence(seed) {
+    return () => {
+      seed = (Math.imul(1664525, seed) + 1013904223) >>> 0;
+      return seed / 4294967296;
     };
-    ['#ce9388','#9b92d0'].forEach((color, i) => {
-      add(new T.BoxGeometry(3,.35,2.3), new T.MeshStandardMaterial({map:porousTexture(color),roughness:1}), [i ? 1.5 : -1.5,-.175,0]);
-    });
-    const floor = add(new T.PlaneGeometry(6,2.3), new T.MeshBasicMaterial({map:porousTexture('',true),side:T.DoubleSide}), [0,.008,0]);
-    floor.rotation.x = -Math.PI / 2;
-    for (let row=0; row<7; row++) {
-      const depth = -1.03 + row * 2.06 / 6;
-      const points = PROFILE.x.map((x,i) => new T.Vector3(6*x-3,.15+1.65*PROFILE.u[i],depth));
-      add(new T.TubeGeometry(new T.CatmullRomCurve3(points),240,row===0?.015:.009,6,false),new T.MeshBasicMaterial({color:'#fff4db'}),[0,0,0]);
-    }
-    const line = new T.BufferGeometry().setFromPoints([new T.Vector3(0,.024,-1.15),new T.Vector3(0,.024,1.15)]);
-    this.group.add(new T.Line(line,new T.LineBasicMaterial({color:'#ffffff'})));
-    const canvas = document.createElement('canvas'); canvas.width=128;canvas.height=32;
-    const ctx=canvas.getContext('2d');const gradient=ctx.createRadialGradient(64,16,0,64,16,64);
-    gradient.addColorStop(0,'rgba(255,255,225,1)');gradient.addColorStop(1,'rgba(255,255,225,0)');
-    ctx.fillStyle=gradient;ctx.fillRect(0,0,128,32);
-    const texture=new T.CanvasTexture(canvas);
-    for(let row=0;row<5;row++) for(let k=0;k<4;k++) {
-      const glow=add(new T.PlaneGeometry(.48,.10),new T.MeshBasicMaterial({map:texture,transparent:true,depthWrite:false,blending:T.AdditiveBlending,side:T.DoubleSide}),[0,.035,-.9+row*.45]);
-      glow.rotation.x=-Math.PI/2;this.glows.push({mesh:glow,phase:k/4});
-    }
-    document.getElementById('pause').onclick=()=>{this.paused=!this.paused;document.getElementById('pause').textContent=this.paused?'Resume animation':'Pause animation';};
-  },
-  tick(time, dt) {
-    if(!this.paused) this.clock += Math.min(dt,100)/1000;
-    for(const glow of this.glows) {
-      const x=(this.clock/7+glow.phase)%1;
-      glow.mesh.position.x=6*x-3;
-      glow.mesh.material.opacity=.95*fluxAt(x);
-    }
   }
-});
+
+  function ceramicMaterial(rgb, seed) {
+    const random = randomSequence(seed);
+    const size = 512;
+    const albedo = canvasLayer(size, size);
+    const relief = canvasLayer(size, size);
+    const image = albedo.createImageData(size, size);
+    const coarse = Array.from({ length: 81 }, () => random());
+    for (let y = 0; y < size; y++) {
+      const row = y / 64, iy = Math.floor(row);
+      for (let x = 0; x < size; x++) {
+        const column = x / 64, ix = Math.floor(column);
+        const a = iy * 9 + ix;
+        const top = T.MathUtils.lerp(coarse[a], coarse[a + 1], column - ix);
+        const bottom = T.MathUtils.lerp(coarse[a + 9], coarse[a + 10], column - ix);
+        const shade = (T.MathUtils.lerp(top, bottom, row - iy) - .5) * 22 + (random() - .5) * 21;
+        const i = 4 * (y * size + x);
+        image.data[i] = rgb[0] + shade;
+        image.data[i + 1] = rgb[1] + shade;
+        image.data[i + 2] = rgb[2] + shade;
+        image.data[i + 3] = 255;
+      }
+    }
+    albedo.putImageData(image, 0, 0);
+    relief.fillStyle = '#b7b7b7';
+    relief.fillRect(0, 0, size, size);
+
+    // Uneven pits and grains create the visible structure of the cut surface.
+    for (let i = 0; i < 4200; i++) {
+      const radius = .65 + 9.3 * random() ** 3.15;
+      const x = 10 + (size - 20) * random(), y = 10 + (size - 20) * random();
+      const flatten = .55 + .42 * random(), angle = random() * Math.PI;
+      if (i % 8 === 0) {
+        albedo.fillStyle = 'rgba(242,224,192,.21)';
+        albedo.beginPath();
+        albedo.ellipse(x, y, radius, radius * flatten, angle, 0, Math.PI * 2);
+        albedo.fill();
+        continue;
+      }
+      for (const ctx of [albedo, relief]) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        ctx.scale(1, flatten);
+        const pit = ctx.createRadialGradient(-radius * .17, -radius * .23, 0, 0, 0, radius);
+        if (ctx === albedo) {
+          pit.addColorStop(0, 'rgba(13,23,22,.80)');
+          pit.addColorStop(.57, 'rgba(20,25,24,.64)');
+          pit.addColorStop(.83, 'rgba(57,43,34,.28)');
+          pit.addColorStop(.93, 'rgba(242,217,180,.18)');
+          pit.addColorStop(1, 'rgba(230,219,208,0)');
+        } else {
+          pit.addColorStop(0, '#282828');
+          pit.addColorStop(.68, '#626262');
+          pit.addColorStop(.91, '#c2c2c2');
+          pit.addColorStop(1, '#b7b7b7');
+        }
+        ctx.fillStyle = pit;
+        ctx.beginPath();
+        ctx.arc(0, 0, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+    const map = textureFrom(albedo);
+    const bumpMap = textureFrom(relief, false);
+    for (const texture of [map, bumpMap]) {
+      texture.wrapS = texture.wrapT = T.RepeatWrapping;
+      texture.anisotropy = 4;
+    }
+    return new T.MeshStandardMaterial({ map, bumpMap, bumpScale: .012, roughness: .96 });
+  }
+
+  function roundedSlab(width, height, breadth) {
+    const segments = 7, radius = .046;
+    const geometry = new T.BoxGeometry(1, 1, 1, segments, segments, segments);
+    const { position, normal, uv } = geometry.attributes;
+    const point = new T.Vector3(), roundedNormal = new T.Vector3();
+    const flat = new T.Vector3(width / 2 - radius, height / 2 - radius, breadth / 2 - radius);
+    const halfStep = .5 / segments;
+    for (let i = 0; i < position.count; i++) {
+      point.fromBufferAttribute(position, i);
+      const sx = Math.sign(point.x), sy = Math.sign(point.y), sz = Math.sign(point.z);
+      roundedNormal.set(point.x - sx * halfStep, point.y - sy * halfStep, point.z - sz * halfStep).normalize();
+      const x = sx * flat.x + radius * roundedNormal.x;
+      const y = sy * flat.y + radius * roundedNormal.y;
+      const z = sz * flat.z + radius * roundedNormal.z;
+      // Map the pores in physical units so the slab's cut faces use the same grain.
+      const u = Math.abs(normal.getX(i)) > .5 ? z : x;
+      const v = Math.abs(normal.getY(i)) > .5 ? z : y;
+      uv.setXY(i, u / 1.28 + .5, v / 1.28 + .5);
+      position.setXYZ(i, x, y, z);
+      normal.setXYZ(i, roundedNormal.x, roundedNormal.y, roundedNormal.z);
+    }
+    geometry.clearGroups();
+    return geometry;
+  }
+
+  function intensityMap() {
+    const width = 512, height = 64;
+    const ctx = canvasLayer(width, height);
+    const image = ctx.createImageData(width, height);
+    const blue = new T.Color('#367ba0'), cyan = new T.Color('#73d8d3'), gold = new T.Color('#ffdda2');
+    const color = new T.Color();
+    const rgb = {};
+    for (let x = 0; x < width; x++) {
+      const flux = fluxAt(x / (width - 1));
+      if (flux <= .66) color.copy(blue).lerp(cyan, flux / .66);
+      else color.copy(cyan).lerp(gold, ((flux - .66) / .34) ** 1.3);
+      color.getRGB(rgb, T.SRGBColorSpace);
+      for (let y = 0; y < height; y++) {
+        const crossFade = Math.sin(Math.PI * y / (height - 1)) ** 1.45;
+        const i = 4 * (y * width + x);
+        image.data[i] = 255 * rgb.r;
+        image.data[i + 1] = 255 * rgb.g;
+        image.data[i + 2] = 255 * rgb.b;
+        image.data[i + 3] = 255 * crossFade * (.13 + .47 * flux);
+      }
+    }
+    ctx.putImageData(image, 0, 0);
+    return textureFrom(ctx);
+  }
+
+  function streakTexture() {
+    const ctx = canvasLayer(256, 48);
+    const aura = ctx.createRadialGradient(172, 24, 0, 172, 24, 96);
+    aura.addColorStop(0, 'rgba(206,248,242,.48)');
+    aura.addColorStop(1, 'rgba(206,248,242,0)');
+    ctx.save();
+    ctx.translate(0, 24);
+    ctx.scale(1, .17);
+    ctx.translate(0, -24);
+    ctx.fillStyle = aura;
+    ctx.fillRect(0, -74, 256, 196);
+    ctx.restore();
+
+    const line = ctx.createLinearGradient(7, 0, 239, 0);
+    line.addColorStop(0, 'rgba(176,241,233,0)');
+    line.addColorStop(.7, 'rgba(209,249,242,.8)');
+    line.addColorStop(1, '#fff0c7');
+    ctx.fillStyle = line;
+    ctx.fillRect(7, 22, 222, 4);
+    ctx.beginPath();
+    ctx.moveTo(230, 24);
+    ctx.lineTo(200, 11);
+    ctx.lineTo(206, 24);
+    ctx.lineTo(200, 37);
+    ctx.closePath();
+    ctx.fill();
+    return textureFrom(ctx);
+  }
+
+  function plotLabel(text) {
+    const ctx = canvasLayer(256, 112);
+    ctx.font = 'italic 78px Georgia, serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = '#233839';
+    ctx.fillStyle = '#fff5de';
+    ctx.strokeText(text, 128, 59);
+    ctx.fillText(text, 128, 59);
+    const label = new T.Sprite(new T.SpriteMaterial({ map: textureFrom(ctx), depthWrite: false, toneMapped: false }));
+    label.scale.set(.61, .267, 1);
+    return label;
+  }
+
+  const pointOnProfile = (i, z) => new T.Vector3(length * PROFILE.x[i] - length / 2, .15 + 1.65 * PROFILE.u[i], z);
+
+  AFRAME.registerComponent('flux-model', {
+    init() {
+      this.group = new T.Group();
+      this.el.setObject3D('mesh', this.group);
+      this.clock = 0;
+      this.paused = false;
+      this.streaks = [];
+
+      const add = (geometry, material, x = 0, y = 0, z = 0) => {
+        const mesh = new T.Mesh(geometry, material);
+        mesh.position.set(x, y, z);
+        this.group.add(mesh);
+        return mesh;
+      };
+      const slab = roundedSlab(length / 2, thickness, depth);
+      add(slab, ceramicMaterial([165, 110, 88], 12317), -length / 4, -thickness / 2);
+      add(slab, ceramicMaterial([76, 105, 97], 48311), length / 4, -thickness / 2);
+
+      const map = add(new T.PlaneGeometry(length - .08, depth - .10), new T.MeshBasicMaterial({
+        map: intensityMap(), transparent: true, depthWrite: false, side: T.DoubleSide, toneMapped: false
+      }), 0, .012);
+      map.rotation.x = -Math.PI / 2;
+      map.renderOrder = 1;
+
+      const ivory = new T.MeshBasicMaterial({ color: '#fff2d7', toneMapped: false });
+      const contour = new T.MeshBasicMaterial({ color: '#344949', side: T.BackSide, toneMapped: false });
+      const links = new T.MeshBasicMaterial({ color: '#a6aaa0', transparent: true, opacity: .59, depthWrite: false, toneMapped: false });
+      const last = PROFILE.x.length - 1;
+      for (let row = 0; row < 6; row++) {
+        const z = profileWidth * (1 - 2 * row / 5);
+        const curve = new T.CatmullRomCurve3(PROFILE.x.map((_, index) => pointOnProfile(index, z)));
+        const radius = row === 0 ? .020 : .013;
+        add(new T.TubeGeometry(curve, 112, radius, 6, false), ivory);
+        add(new T.TubeGeometry(curve, 112, radius * 1.38, 6, false), contour);
+      }
+      for (const fraction of [.14, .38, .63, .89]) {
+        const index = Math.round(last * fraction);
+        const line = new T.LineCurve3(pointOnProfile(index, -profileWidth), pointOnProfile(index, profileWidth));
+        add(new T.TubeGeometry(line, 1, .009, 5, false), links);
+      }
+
+      const profileLabel = plotLabel('u(x)');
+      profileLabel.position.copy(pointOnProfile(Math.round(last * .31), -.6));
+      profileLabel.position.y += .25;
+      this.group.add(profileLabel);
+      const fluxLabel = plotLabel('J(x)');
+      fluxLabel.position.set(1.04, .16, .92);
+      this.group.add(fluxLabel);
+
+      const streak = new T.PlaneGeometry(.77, .177);
+      const streakMap = streakTexture();
+      for (let lane = 0; lane < 3; lane++) {
+        for (let i = 0; i < 4; i++) {
+          const material = new T.MeshBasicMaterial({
+            map: streakMap, transparent: true, depthWrite: false, side: T.DoubleSide, toneMapped: false
+          });
+          const mesh = add(streak, material, 0, .032, -.53 + lane * .53);
+          mesh.rotation.x = -Math.PI / 2;
+          mesh.renderOrder = 2;
+          this.streaks.push({ mesh, phase: (i + lane * .28) / 4 });
+        }
+      }
+      this.drawStreaks();
+
+      this.pauseButton = document.getElementById('pause');
+      this.togglePause = () => {
+        this.paused = !this.paused;
+        this.pauseButton.textContent = this.paused ? 'Resume animation' : 'Pause animation';
+      };
+      this.pauseButton?.addEventListener('click', this.togglePause);
+    },
+
+    drawStreaks() {
+      for (const { mesh, phase } of this.streaks) {
+        const x = (this.clock / 7 + phase) % 1;
+        mesh.position.x = (length - .62) * (x - .5);
+        mesh.material.opacity = Math.sin(Math.PI * x) ** .65 * (.34 + .66 * fluxAt(x));
+      }
+    },
+
+    tick(time, delta) {
+      if (this.paused || !this.el.parentEl.object3D.visible || !delta) return;
+      this.clock += Math.min(delta, 100) / 1000;
+      this.drawStreaks();
+    },
+
+    remove() {
+      this.pauseButton?.removeEventListener('click', this.togglePause);
+      const resources = new Set();
+      this.group.traverse(({ geometry, material }) => {
+        if (geometry) resources.add(geometry);
+        if (material) {
+          resources.add(material);
+          if (material.map) resources.add(material.map);
+          if (material.bumpMap) resources.add(material.bumpMap);
+        }
+      });
+      for (const resource of resources) resource.dispose();
+      this.el.removeObject3D('mesh');
+    }
+  });
+})();
