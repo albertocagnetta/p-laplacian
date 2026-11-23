@@ -59,7 +59,7 @@ if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
   scene.innerHTML = `
     <a-camera position="0 0 0" look-controls="enabled: false" wasd-controls="enabled: false"></a-camera>
     <a-entity id="anchor" mindar-image-target="targetIndex: 0">
-      <a-entity flux-model scale=".133333 .136364 .15" position=".02 -.062455 .1725"></a-entity>
+      <a-entity flux-model scale="${FlowScene.placement.scale.join(' ')}" position="${FlowScene.placement.position.join(' ')}"></a-entity>
     </a-entity>
     <a-entity light="type: ambient; intensity: 1.3"></a-entity>
     <a-entity light="type: directional; intensity: 1" position="1 4 3"></a-entity>

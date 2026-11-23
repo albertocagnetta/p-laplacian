@@ -1,5 +1,5 @@
 (() => {
-  const T = AFRAME.THREE;
+  const T = window.AFRAME?.THREE || window.THREE;
   const length = 6;
   const depth = 2.3;
   const thickness = .46;
@@ -200,96 +200,86 @@
 
   const pointOnProfile = (i, z) => new T.Vector3(length * PROFILE.x[i] - length / 2, .15 + 1.65 * PROFILE.u[i], z);
 
-  AFRAME.registerComponent('flux-model', {
-    init() {
-      this.group = new T.Group();
-      this.el.setObject3D('mesh', this.group);
-      this.clock = 0;
-      this.paused = false;
-      this.streaks = [];
+  const placement = {
+    scale: [.133333, .136364, .15],
+    position: [.02, -.062455, .1725]
+  };
 
-      const add = (geometry, material, x = 0, y = 0, z = 0) => {
-        const mesh = new T.Mesh(geometry, material);
-        mesh.position.set(x, y, z);
-        this.group.add(mesh);
-        return mesh;
-      };
-      const slab = roundedSlab(length / 2, thickness, depth);
-      add(slab, ceramicMaterial([165, 110, 88], 12317), -length / 4, -thickness / 2);
-      add(slab, ceramicMaterial([76, 105, 97], 48311), length / 4, -thickness / 2);
+  function createModel() {
+    const group = new T.Group();
+    const streaks = [];
+    let elapsed = 0;
 
-      const map = add(new T.PlaneGeometry(length - .08, depth - .10), new T.MeshBasicMaterial({
-        map: intensityMap(), transparent: true, depthWrite: false, side: T.DoubleSide, toneMapped: false
-      }), 0, .012);
-      map.rotation.x = -Math.PI / 2;
-      map.renderOrder = 1;
+    const add = (geometry, material, x = 0, y = 0, z = 0) => {
+      const mesh = new T.Mesh(geometry, material);
+      mesh.position.set(x, y, z);
+      group.add(mesh);
+      return mesh;
+    };
+    const slab = roundedSlab(length / 2, thickness, depth);
+    add(slab, ceramicMaterial([165, 110, 88], 12317), -length / 4, -thickness / 2);
+    add(slab, ceramicMaterial([76, 105, 97], 48311), length / 4, -thickness / 2);
 
-      const ivory = new T.MeshBasicMaterial({ color: '#fff2d7', toneMapped: false });
-      const contour = new T.MeshBasicMaterial({ color: '#344949', side: T.BackSide, toneMapped: false });
-      const links = new T.MeshBasicMaterial({ color: '#a6aaa0', transparent: true, opacity: .59, depthWrite: false, toneMapped: false });
-      const last = PROFILE.x.length - 1;
-      for (let row = 0; row < 6; row++) {
-        const z = profileWidth * (1 - 2 * row / 5);
-        const curve = new T.CatmullRomCurve3(PROFILE.x.map((_, index) => pointOnProfile(index, z)));
-        const radius = row === 0 ? .020 : .013;
-        add(new T.TubeGeometry(curve, 112, radius, 6, false), ivory);
-        add(new T.TubeGeometry(curve, 112, radius * 1.38, 6, false), contour);
+    const map = add(new T.PlaneGeometry(length - .08, depth - .10), new T.MeshBasicMaterial({
+      map: intensityMap(), transparent: true, depthWrite: false, side: T.DoubleSide, toneMapped: false
+    }), 0, .012);
+    map.rotation.x = -Math.PI / 2;
+    map.renderOrder = 1;
+
+    const ivory = new T.MeshBasicMaterial({ color: '#fff2d7', toneMapped: false });
+    const contour = new T.MeshBasicMaterial({ color: '#344949', side: T.BackSide, toneMapped: false });
+    const links = new T.MeshBasicMaterial({ color: '#a6aaa0', transparent: true, opacity: .59, depthWrite: false, toneMapped: false });
+    const last = PROFILE.x.length - 1;
+    for (let row = 0; row < 6; row++) {
+      const z = profileWidth * (1 - 2 * row / 5);
+      const curve = new T.CatmullRomCurve3(PROFILE.x.map((_, index) => pointOnProfile(index, z)));
+      const radius = row === 0 ? .020 : .013;
+      add(new T.TubeGeometry(curve, 112, radius, 6, false), ivory);
+      add(new T.TubeGeometry(curve, 112, radius * 1.38, 6, false), contour);
+    }
+    for (const fraction of [.14, .38, .63, .89]) {
+      const index = Math.round(last * fraction);
+      const line = new T.LineCurve3(pointOnProfile(index, -profileWidth), pointOnProfile(index, profileWidth));
+      add(new T.TubeGeometry(line, 1, .009, 5, false), links);
+    }
+
+    const profileLabel = plotLabel('u(x)');
+    profileLabel.position.copy(pointOnProfile(Math.round(last * .31), -.6));
+    profileLabel.position.y += .25;
+    group.add(profileLabel);
+    const fluxLabel = plotLabel('J(x)');
+    fluxLabel.position.set(1.04, .16, .92);
+    group.add(fluxLabel);
+
+    const streak = new T.PlaneGeometry(.77, .177);
+    const streakMap = streakTexture();
+    for (let lane = 0; lane < 3; lane++) {
+      for (let i = 0; i < 4; i++) {
+        const material = new T.MeshBasicMaterial({
+          map: streakMap, transparent: true, depthWrite: false, side: T.DoubleSide, toneMapped: false
+        });
+        const mesh = add(streak, material, 0, .032, -.53 + lane * .53);
+        mesh.rotation.x = -Math.PI / 2;
+        mesh.renderOrder = 2;
+        streaks.push({ mesh, phase: (i + lane * .28) / 4 });
       }
-      for (const fraction of [.14, .38, .63, .89]) {
-        const index = Math.round(last * fraction);
-        const line = new T.LineCurve3(pointOnProfile(index, -profileWidth), pointOnProfile(index, profileWidth));
-        add(new T.TubeGeometry(line, 1, .009, 5, false), links);
-      }
-
-      const profileLabel = plotLabel('u(x)');
-      profileLabel.position.copy(pointOnProfile(Math.round(last * .31), -.6));
-      profileLabel.position.y += .25;
-      this.group.add(profileLabel);
-      const fluxLabel = plotLabel('J(x)');
-      fluxLabel.position.set(1.04, .16, .92);
-      this.group.add(fluxLabel);
-
-      const streak = new T.PlaneGeometry(.77, .177);
-      const streakMap = streakTexture();
-      for (let lane = 0; lane < 3; lane++) {
-        for (let i = 0; i < 4; i++) {
-          const material = new T.MeshBasicMaterial({
-            map: streakMap, transparent: true, depthWrite: false, side: T.DoubleSide, toneMapped: false
-          });
-          const mesh = add(streak, material, 0, .032, -.53 + lane * .53);
-          mesh.rotation.x = -Math.PI / 2;
-          mesh.renderOrder = 2;
-          this.streaks.push({ mesh, phase: (i + lane * .28) / 4 });
-        }
-      }
-      this.drawStreaks();
-
-      this.pauseButton = document.getElementById('pause');
-      this.togglePause = () => {
-        this.paused = !this.paused;
-        this.pauseButton.textContent = this.paused ? 'Resume animation' : 'Pause animation';
-      };
-      this.pauseButton?.addEventListener('click', this.togglePause);
-    },
-
-    drawStreaks() {
-      for (const { mesh, phase } of this.streaks) {
-        const x = (this.clock / 7 + phase) % 1;
+    }
+    function drawStreaks() {
+      for (const { mesh, phase } of streaks) {
+        const x = (elapsed / 7 + phase) % 1;
         mesh.position.x = (length - .62) * (x - .5);
         mesh.material.opacity = Math.sin(Math.PI * x) ** .65 * (.34 + .66 * fluxAt(x));
       }
-    },
+    }
 
-    tick(time, delta) {
-      if (this.paused || !this.el.parentEl.object3D.visible || !delta) return;
-      this.clock += Math.min(delta, 100) / 1000;
-      this.drawStreaks();
-    },
+    function advance(deltaSeconds) {
+      elapsed += Math.min(deltaSeconds, .1);
+      drawStreaks();
+    }
 
-    remove() {
-      this.pauseButton?.removeEventListener('click', this.togglePause);
+    function dispose() {
       const resources = new Set();
-      this.group.traverse(({ geometry, material }) => {
+      group.traverse(({ geometry, material }) => {
         if (geometry) resources.add(geometry);
         if (material) {
           resources.add(material);
@@ -298,6 +288,42 @@
         }
       });
       for (const resource of resources) resource.dispose();
+    }
+
+    drawStreaks();
+    return { group, advance, dispose };
+  }
+
+  function connectPauseButton(button) {
+    let paused = false;
+    const toggle = () => {
+      paused = !paused;
+      button.textContent = paused ? 'Resume animation' : 'Pause animation';
+    };
+    button?.addEventListener('click', toggle);
+    return {
+      isPaused: () => paused,
+      dispose: () => button?.removeEventListener('click', toggle)
+    };
+  }
+
+  window.FlowScene = { createModel, connectPauseButton, placement };
+
+  window.AFRAME?.registerComponent('flux-model', {
+    init() {
+      this.model = createModel();
+      this.el.setObject3D('mesh', this.model.group);
+      this.pause = connectPauseButton(document.getElementById('pause'));
+    },
+
+    tick(time, delta) {
+      if (this.pause.isPaused() || !this.el.parentEl.object3D.visible || !delta) return;
+      this.model.advance(delta / 1000);
+    },
+
+    remove() {
+      this.pause.dispose();
+      this.model.dispose();
       this.el.removeObject3D('mesh');
     }
   });

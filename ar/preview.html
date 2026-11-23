@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flow and concentration · 3D preview</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="phase/style.css">
+  <script defer src="phase/vendor/three.min.js"></script>
+  <script defer src="profile.js"></script>
+  <script defer src="model.js?v=flow-preview"></script>
+  <script defer src="orbit-viewer.js"></script>
+  <script defer src="preview.js"></script>
+</head>
+<body>
+<header>
+  <strong>Alberto Cagnetta</strong>
+  <nav aria-label="Viewer mode">
+    <a href="../">Poster</a>
+    <a href="preview.html" aria-current="page">3D preview</a>
+    <a href="./">Camera AR</a>
+  </nav>
+</header>
+<main>
+  <div class="heading">
+    <h1>Steady concentration, ongoing transport</h1>
+    <p>Flow through a porous slab</p>
+  </div>
+  <div class="layout">
+    <div class="stage" id="stage" aria-label="3D flow viewer">
+      <button type="button" class="small" id="reset-view">Reset view</button>
+      <span class="chip" role="status" id="status">Loading viewer…</span>
+    </div>
+    <div>
+      <section class="panel" aria-label="Flow controls">
+        <div class="controls-head">
+          <h2>Flow</h2>
+          <button type="button" id="pause">Pause animation</button>
+        </div>
+        <p class="explain">The ivory curves show the stationary concentration <i>u</i>(<i>x</i>). The streaks show the direction of the flux <i>J</i>(<i>x</i>), which peaks at the interface.</p>
+      </section>
+      <div class="aside"><a href="target.png" target="_blank" rel="noopener">Open target image</a></div>
+    </div>
+  </div>
+</main>
+</body>
+</html>
