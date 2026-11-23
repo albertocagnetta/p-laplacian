@@ -1,0 +1,12 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Two phase towers · Alberto Cagnetta</title><link rel="icon" href="data:,"><link rel="stylesheet" href="style.css"></head><body>
+<header><strong>Alberto Cagnetta</strong><nav aria-label="Viewer mode"><a href="../../">Poster</a><a href="preview.html" aria-current="page">3D preview</a><a href="./" >Camera AR</a></nav></header>
+<main><div class="heading"><h1>Two phase towers</h1><p>Phase-plane orbits of the two-step <i>p</i>-Laplacian · <i>p</i> = 2, ν = 2 · Rescaled: <i>u</i>(0) = 1</p></div>
+<div class="layout"><div><div class="stage " id="stage"><button type="button" class="small" id="reset-view">Reset view</button>
+<span class="chip" role="status" id="status">Loading viewer…</span></div>
+<div class="legend"><span><i class="sw"></i> S₊ · positive weight</span><span><i class="sw b"></i> S₋ · negative weight</span></div></div>
+<div><section class="panel" id="controls"  aria-label="Level controls"><div class="controls-head"><h2>Level plane</h2><button type="button" id="play">Pause</button></div>
+<div class="level"><label for="height">τ/(T−τ) = </label><output id="readout" for="height">1</output></div>
+<input type="range" id="height" min="0" max="2" value="1" step="any" aria-label="Ratio of the two time intervals">
+<div class="presets" aria-label="Jump to a level"><button data-level="0">0</button><button data-level=".25">0.25</button><button data-level="L">L ≈ 0.512</button><button data-level="1">1</button><button data-level="2">2</button></div>
+<dl class="results"><div><dt>γ = ½ <small>0 &lt; γ &lt; p−1</small></dt><dd data-result>One positive orbit</dd></div><div><dt>γ = 3 <small>γ &gt; p−1</small></dt><dd data-result>One positive orbit</dd></div></dl></section><p class="explain">Each section traces one positive orbit for that exponent. For 0 &lt; τ/(T−τ) ≤ <i>L</i>, only the γ = 3 orbit remains.</p><div class="aside"><a href="assets/phase-target.pdf" target="_blank">Print the phase plane</a><a href="assets/phase-target.png" target="_blank">Open target image</a></div></div></div></main>
+<footer>Match two autonomous arcs · Neumann boundary conditions</footer><script src="vendor/three.min.js"></script><script src="towers.js"></script><script src="ui.js"></script><script src="preview.js"></script></body></html>
