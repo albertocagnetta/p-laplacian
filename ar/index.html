@@ -9,12 +9,12 @@
 <script defer src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 <script defer src="profile.js"></script>
 <script defer src="model.js?v=flow-preview"></script>
-<script defer src="camera.js?v=flow-preview"></script>
+<script defer src="camera.js?v=flow-block1-v2"></script>
 </head>
 <body>
 <header><strong>Augmented reality</strong><nav aria-label="Viewer mode"><a href="preview.html">3D preview</a><a href="../">Back to poster</a></nav></header>
 <main id="controls">
-  <p id="status" role="status">Use the camera to scan the concentration and flux figure.</p>
+  <p id="status" role="status">Use the camera to scan the two-panel weight and concentration figure.</p>
   <div>
     <button id="start" type="button" disabled>Start camera</button>
     <button id="pause" type="button" hidden>Pause animation</button>
@@ -27,7 +27,8 @@
   </div>
   <details class="target-help">
     <summary>Show me the figure</summary>
-    <img src="target.png" alt="Target figure showing a concentration curve above the flux graph" width="1600" height="1120">
+    <img src="target.png?v=flow-block1-v2" alt="Sign-changing weight above the steady concentration profile" width="1800" height="900">
+    <a href="target.pdf?v=flow-block1-v2" target="_blank" rel="noopener">Print the target (PDF)</a>
   </details>
 </main>
 <div id="camera-frame"></div>
