@@ -55,7 +55,7 @@ if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
   scene.setAttribute('vr-mode-ui', 'enabled: false');
   scene.setAttribute('device-orientation-permission-ui', 'enabled: false');
   scene.setAttribute('renderer', 'colorManagement: true; antialias: true');
-  scene.setAttribute('mindar-image', 'imageTargetSrc: targets.mind; autoStart: false; uiScanning: no; uiLoading: no; uiError: no');
+  scene.setAttribute('mindar-image', 'imageTargetSrc: targets.mind?v=flow-block1-v2; autoStart: false; uiScanning: no; uiLoading: no; uiError: no');
   scene.innerHTML = `
     <a-camera position="0 0 0" look-controls="enabled: false" wasd-controls="enabled: false"></a-camera>
     <a-entity id="anchor" mindar-image-target="targetIndex: 0">
