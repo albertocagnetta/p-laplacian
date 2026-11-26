@@ -21,7 +21,7 @@
     scene.setAttribute('xr-mode-ui','enabled: false');
     scene.setAttribute('device-orientation-permission-ui','enabled: false');
     scene.setAttribute('renderer','colorManagement: true; antialias: true; alpha: true');
-    scene.setAttribute('mindar-image','imageTargetSrc: assets/targets.mind?v=phase-block3-v1; autoStart: false; maxTrack: 1; warmupTolerance: 5; missTolerance: 5; uiScanning: no; uiLoading: no; uiError: no');
+    scene.setAttribute('mindar-image','imageTargetSrc: assets/targets.mind?v=phase-block3-v1; autoStart: false; maxTrack: 1; warmupTolerance: 5; missTolerance: 5; filterMinCF: 0.0007; filterBeta: 300; uiScanning: no; uiLoading: no; uiError: no');
     scene.innerHTML='<a-camera position="0 0 0" look-controls="enabled:false" wasd-controls="enabled:false"></a-camera><a-entity id="flux" mindar-image-target="targetIndex: 0"><a-entity flux-model scale=".133333 .136364 .15" position=".02 -.062455 .1725"></a-entity></a-entity><a-entity id="towers" mindar-image-target="targetIndex: 1"><a-entity phase-towers></a-entity></a-entity><a-entity light="type: ambient; intensity: 1.3"></a-entity><a-entity light="type: directional; intensity: 1" position="1 4 3"></a-entity>';
     let current='';
     for(const id of ['flux','towers']){
