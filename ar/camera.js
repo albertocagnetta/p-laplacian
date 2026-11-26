@@ -55,11 +55,11 @@ if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
   scene.setAttribute('vr-mode-ui', 'enabled: false');
   scene.setAttribute('device-orientation-permission-ui', 'enabled: false');
   scene.setAttribute('renderer', 'colorManagement: true; antialias: true');
-  scene.setAttribute('mindar-image', 'imageTargetSrc: targets.mind?v=flow-block1-v2; autoStart: false; uiScanning: no; uiLoading: no; uiError: no');
+  scene.setAttribute('mindar-image', 'imageTargetSrc: targets.mind?v=flow-block1-v2; autoStart: false; filterMinCF: 0.0007; filterBeta: 300; uiScanning: no; uiLoading: no; uiError: no');
   scene.innerHTML = `
     <a-camera position="0 0 0" look-controls="enabled: false" wasd-controls="enabled: false"></a-camera>
     <a-entity id="anchor" mindar-image-target="targetIndex: 0">
-      <a-entity flux-model scale="${FlowScene.placement.scale.join(' ')}" position="${FlowScene.placement.position.join(' ')}"></a-entity>
+      <a-entity stable-target-pose><a-entity flux-model scale="${FlowScene.placement.scale.join(' ')}" position="${FlowScene.placement.position.join(' ')}"></a-entity></a-entity>
     </a-entity>
     <a-entity light="type: ambient; intensity: 1.3"></a-entity>
     <a-entity light="type: directional; intensity: 1" position="1 4 3"></a-entity>
