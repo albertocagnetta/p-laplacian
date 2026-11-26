@@ -9,7 +9,7 @@
     const scene = new T.Scene();
     scene.add(
       PhaseTowers.mountOnVerticalPoster(model.group),
-      OrbitViewer.makePoster('assets/phase-target.png?v=phase-block3-v1', 948 / 2280, .60)
+      OrbitViewer.makePoster('assets/phase-target.png?v=phase-block3-z', 948 / 2280, .60)
     );
 
     ui.reset();
