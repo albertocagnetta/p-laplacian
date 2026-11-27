@@ -1,11 +1,12 @@
 const figures = {
-  periodic: { section: '2 · An open question', title: 'From periodic to Neumann', caption: 'A half-period between two turning points gives a Neumann solution.' },
+  periodic: { section: '2 · An open question', title: 'From Neumann to periodic',
+    caption: 'See how reflecting the Neumann solution across a turning point builds a full period.' },
   flow: { section: '1 · A weight that changes sign once', title: 'Weight and solution', caption: 'Follow the flow along the printed concentration profile in augmented reality.' },
   phase: { section: '3 · Two arcs, one ratio, one crossing', title: 'The phase plane', caption: 'Explore how the two autonomous arcs meet at Z. Scan the printed phase plane to see the towers rise above it.' },
   quotient: { section: '3 · Two arcs, one ratio, one crossing', title: 'The time-map quotient', caption: 'Watch how a horizontal level meets a monotone curve to determine whether a positive solution exists.' }
 };
 const el = id => document.getElementById(id);
-const overview = el('overview'), detail = el('detail'), plot = el('plot');
+const overview = el('overview'), detail = el('detail'), plot = el('plot'), media = el('large');
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
 let current = '', changes = [];
 function stopMotion() {
@@ -45,6 +46,12 @@ function condense(button, dots) {
 function actionsFor(key) {
   return posterResources.actions.filter(action => action.figure === key && action.href);
 }
+function youtubeEmbedUrl(url) {
+  const id = url.hostname === 'youtu.be' ? url.pathname.slice(1)
+    : (url.hostname === 'www.youtube.com' || url.hostname === 'youtube.com') && url.searchParams.get('v');
+  if (!id || !/^[A-Za-z0-9_-]{11}$/.test(id)) return null;
+  return 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&playsinline=1';
+}
 function showCommands(key) {
   const commands = el('commands');
   commands.replaceChildren();
@@ -61,9 +68,32 @@ function showCommands(key) {
     const dots = document.createElement('div');
     dots.className = 'particles';
     dots.setAttribute('aria-hidden', 'true');
-    row.append(link, dots);
+    const embedUrl = action.embed && youtubeEmbedUrl(new URL(link.href));
+    let control = link;
+    if (embedUrl) {
+      const play = document.createElement('button');
+      play.type = 'button';
+      play.textContent = action.label;
+      play.addEventListener('click', () => {
+        const player = document.createElement('iframe');
+        player.src = embedUrl;
+        player.title = el('detailTitle').textContent + ' · YouTube video';
+        player.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+        player.allowFullscreen = true;
+        player.referrerPolicy = 'strict-origin-when-cross-origin';
+        plot.hidden = true;
+        media.append(player);
+        play.hidden = true;
+        player.focus();
+      }, { once: true });
+      link.textContent = 'Watch on YouTube';
+      link.className = 'video-link';
+      row.append(play);
+      control = play;
+    }
+    row.append(dots, link);
     commands.append(row);
-    if (!motion.matches) condense(link, dots);
+    if (!motion.matches) condense(control, dots);
   }
 }
 function render() {
@@ -74,7 +104,10 @@ function render() {
   const old=current;
   const target=document.querySelector('[data-key="'+(item?key:old)+'"]');
   const thumbnail=target.querySelector('img');
-  const from=(item ? thumbnail : plot).getBoundingClientRect();
+  const player = media.querySelector('iframe');
+  const from=(item ? thumbnail : (player || plot)).getBoundingClientRect();
+  player?.remove();
+  plot.hidden = false;
   current=item ? key : '';
   overview.hidden=!!item;
   detail.hidden=!item;
@@ -105,7 +138,6 @@ for (const button of document.querySelectorAll('[data-key]')) {
   const active = actionsFor(key).length > 0;
   if (key === 'periodic') {
     button.hidden = !active;
-    for (const note of button.parentNode.querySelectorAll('.question, .timeline')) note.hidden = active;
   }
   if (!active) {
     button.disabled = true;

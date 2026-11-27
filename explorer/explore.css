@@ -11,3 +11,37 @@ main{padding:20px 16px 48px;max-width:1250px;margin:auto}.heading{text-align:cen
 
 #commands{display:grid;gap:10px}.paper button:disabled{cursor:default;border-color:transparent}.paper button:disabled:after{display:none}
 @media(max-width:680px){.actionPanel{overflow:clip;overflow-clip-margin:8px}}
+
+.paper [data-key="periodic"] { margin-top: 10px; }
+#large iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  background: #071820;
+}
+.command button {
+  display: inline-block;
+  padding: 13px 18px;
+  border: 0;
+  border-radius: 6px;
+  background: #d8edf1;
+  color: #143c48;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+.command button:hover { background: white; }
+.command .video-link {
+  display: block;
+  width: fit-content;
+  margin-top: 8px;
+  padding: 6px 0;
+  background: transparent;
+  color: #d8edf1;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+@media (max-width: 680px) {
+  .command button { width: 100%; }
+}

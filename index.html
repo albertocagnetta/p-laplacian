@@ -99,7 +99,7 @@ h1 i { white-space: nowrap; }
   line-height: 1.18;
   transition: background-color .2s, transform .2s;
 }
-.action:last-child { grid-column: 1 / -1; }
+.action:last-child:nth-child(even) { grid-column: 1 / -1; }
 .action svg { width: 100%; height: auto; }
 .action strong { display: block; font-weight: 400; }
 .action small { display: block; margin-top: .1rem; font-size: .88rem; }
@@ -208,7 +208,7 @@ h1 i { white-space: nowrap; }
 </div>
 </section>
 </main>
-<script src="poster-resources.js"></script>
+<script src="poster-resources.js?v=2"></script>
 <script>
 (() => {
   const menu = document.querySelector('.actions');

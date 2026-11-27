@@ -10,8 +10,9 @@ const posterResources = {
       href: 'ar/phase/', note: 'Scan the phase plane or open the 3D preview.', type: 'ar' },
     { id: 'quotient-video', figure: 'quotient', label: 'Watch the video on the ratio Q',
       href: 'https://www.youtube.com/watch?v=RbK1e94p8v0', note: 'YouTube', type: 'video' },
-    { id: 'periodic-video', figure: 'periodic', label: 'Watch the reduction from periodic to Neumann',
-      href: '', note: 'Video', type: 'video' },
+    { id: 'periodic-video', figure: 'periodic', label: 'Watch how to recover a periodic solution',
+      href: 'https://youtu.be/WSkJY1ATsMg', note: 'From Neumann to periodic · YouTube',
+      type: 'video', embed: true },
     { id: 'phase-video', figure: 'phase', label: 'Watch the phase-plane construction',
       href: '', note: 'Video', type: 'video' }
   ]
