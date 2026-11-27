@@ -10,3 +10,4 @@ main{padding:20px 16px 48px;max-width:1250px;margin:auto}.heading{text-align:cen
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 
 #commands{display:grid;gap:10px}.paper button:disabled{cursor:default;border-color:transparent}.paper button:disabled:after{display:none}
+@media(max-width:680px){.actionPanel{overflow:clip;overflow-clip-margin:8px}}
